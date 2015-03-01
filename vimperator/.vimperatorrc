@@ -1,0 +1,7 @@
+set toolbars=noaddons,nobookmarks,nomenu,nonavigation,notabs
+set focuscontent
+
+noremap <C-j> :bnext<CR>
+noremap <C-k> :bprevious<CR>
+
+command! -nargs=0 yousave :execute '!youtube-dl -x -o "%(title)s-%(id)s.%(ext)s" -f "bestaudio" --audio-quality 192K --audio-format mp3 -i --exec "mv {} ~/music" ' + content.location.href
