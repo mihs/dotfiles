@@ -27,9 +27,12 @@ set number
 
 " Indentation settings for using 2 spaces instead of tabs.
 " Do not change 'tabstop' from its default value of 8 with this setup.
-set shiftwidth=2
-set softtabstop=2
+set shiftwidth=4
+set softtabstop=4
 set expandtab
+
+" Indent with tabs size 8 for go
+autocmd Filetype go setlocal tabstop=4 noexpandtab shiftwidth=4 softtabstop=4
 
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
@@ -50,10 +53,6 @@ set laststatus=2
 set incsearch
 set hlsearch
 nnoremap <silent><leader>/ :nohlsearch<CR>
-
-" github-issues.vim
-let g:github_access_token = ""
-let g:github_same_window = 1
 
 " allow buffer change in the same window when the current buffer is not saved
 set hidden
@@ -92,7 +91,7 @@ function! StripTrailingWhitespace()
   normal `Z
 endfunction
 
-autocmd BufWritePre *.c,*.cpp,*.hpp,*.s,*.i,*.coffee,*.iced,*.js,*.hbs,*.rb,*.py :call StripTrailingWhitespace()
+autocmd BufWritePre *.h,*.c,*.cpp,*.java,*.scala,*.hpp,*.s,*.i,*.coffee,*.iced,*.js,*.hbs,*.rb,*.py :call StripTrailingWhitespace()
 
 " Toggle nerdtree
 nnoremap <c-n> :NERDTreeToggle<CR>
@@ -106,3 +105,6 @@ endif
 " Show some invisible characters
 set list
 set lcs=trail:.,tab:.,,nbsp:.
+
+" Code completion for Java using Eclim
+let g:EclimCompletionMethod = 'omnifunc'
