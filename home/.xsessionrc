@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Set TERMINAL for i3-sensible-terminal
+export TERMINAL=kitty
+
+# Start GNOME Keyring
+eval $(/usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)
+# You probably need to do this too:
+export GPG_AGENT_INFO SSH_AUTH_SOCK
+
+# map caps lock to l-control and compose stuff
+setxkbmap -option ctrl:nocaps,compose:ralt
+
+# Disable touchscreen
+xinput disable 9
+
+# pointer acceleration
+xinput set-prop 14 'libinput Accel Speed' 0.7
+
+# Start redshift configured for Craiova
+gtk-redshift -t 5500:3000 -l 44.323848:23.811951 &
+
+# Helper for mounting media
+udiskie -tA &
+
+blueman-applet &
+
+mate-settings-daemon &

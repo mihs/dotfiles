@@ -1,11 +1,32 @@
 set nocompatible               " be iMproved
 
+call plug#begin(stdpath('data') . '/plugged')
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'flazz/vim-colorschemes'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'fatih/vim-go'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'pangloss/vim-javascript'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+Plug 'Shougo/echodoc.vim'
+
+" Initialize plugin system
+call plug#end()
+
 " Airline displays the list of buffers (using bufferline)
 " no need for bufferline to display the buffers itself
 let g:bufferline_echo = 0
-
-" Pathogen
-execute pathogen#infect()
 
 " disable the start screen
 set shortmess+=I
@@ -32,7 +53,7 @@ set softtabstop=4
 set expandtab
 
 " Indent with tabs size 8 for go
-autocmd Filetype go setlocal tabstop=4 noexpandtab shiftwidth=4 softtabstop=4
+autocmd Filetype go setlocal tabstop=8 noexpandtab shiftwidth=8 softtabstop=8
 
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
@@ -69,8 +90,8 @@ set nowrap
 set scrolloff=3
 
 " Backup and recovery files
-set directory=~/.vimbackup//
-set backupdir=~/.vimbackup
+set directory=~/.nvimbackup//
+set backupdir=~/.nvimbackup
 
 " Command mode completion list
 set wildmenu
@@ -98,7 +119,7 @@ nnoremap <c-n> :NERDTreeToggle<CR>
 
 " Visual guide for wrapping long text
 if exists('+colorcolumn')
-  set colorcolumn=78
+  set colorcolumn=98
   highlight ColorColumn ctermbg=8
 endif
 
@@ -106,5 +127,51 @@ endif
 set list
 set lcs=trail:.,tab:.,,nbsp:.
 
-" Code completion for Java using Eclim
-let g:EclimCompletionMethod = 'omnifunc'
+let g:LanguageClient_serverCommands = {
+    \ 'go': ['gopls'],
+    \ 'python': ['pyls']
+    \ }
+
+" this is done by vim-go
+autocmd BufWritePre *.go :call LanguageClient#textDocument_formatting_sync()
+
+function SetLSPShortcuts()
+  nnoremap <leader>gd :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <leader>gr :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <leader>gf :call LanguageClient#textDocument_formatting()<CR>
+  nnoremap <leader>gt :call LanguageClient#textDocument_typeDefinition()<CR>
+  nnoremap <leader>gx :call LanguageClient#textDocument_references()<CR>
+  nnoremap <leader>ga :call LanguageClient_workspace_applyEdit()<CR>
+  nnoremap <leader>gc :call LanguageClient#textDocument_completion()<CR>
+  nnoremap <leader>gh :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <leader>gs :call LanguageClient_textDocument_documentSymbol()<CR>
+  nnoremap <leader>gm :call LanguageClient_contextMenu()<CR>
+endfunction()
+
+augroup LSP
+  autocmd!
+  autocmd FileType go call SetLSPShortcuts()
+augroup END
+
+" disable gopls in vim-go
+let g:go_gopls_enabled = 0
+
+" disable completion in vim-go
+" let g:go_code_completion_enabled = 1
+let g:go_code_completion_enabled = 0
+
+let g:deoplete#enable_at_startup = 1
+" let g:deoplete#delimiters = ['/','.']
+" let g:deoplete#sources#go = 'vim-go'
+" let g:deoplete#keyword_patterns = {}
+" let g:deoplete#keyword_patterns._ = '[a-zA-Z_]\k*\(?'
+
+" call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*' })
+
+" FZF
+nnoremap <silent> <C-p> :FZF<CR>
+
+" To use echodoc, you must increase 'cmdheight' value.
+set cmdheight=2
+let g:echodoc_enable_at_startup = 1
+" let g:echodoc#type = 'floating'
